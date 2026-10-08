@@ -12,7 +12,7 @@ No cloud, no account, no internet needed.
 - Status refreshes automatically, so changes made in the Yeelight app show up too
 
 Looking for Stream Deck support? See the companion project:
-[yeelight-streamdeck](https://github.com/YOUR-USERNAME/yeelight-streamdeck).
+[yeelight-streamdeck](https://github.com/JohnAntuch/yeelight-streamdeck).
 
 ## Download
 
