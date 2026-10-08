@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
+  <title>Yeelight Control</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>💡 Yeelight Control</h1>
+    <div class="tools">
+      <label class="check" id="startup-label"><input type="checkbox" id="startup" /> Start with Windows</label>
+      <button id="discover" type="button">Discover lamps</button>
+      <form id="add-form">
+        <input id="add-ip" type="text" placeholder="IP, e.g. 192.168.1.50" required />
+        <input id="add-name" type="text" placeholder="Name (optional)" />
+        <button type="submit">Add</button>
+      </form>
+    </div>
+  </header>
+
+  <section id="all" class="all" hidden>
+    <div class="all-head">
+      <h2>All lamps</h2>
+      <div class="all-buttons">
+        <button id="all-on" type="button">All on</button>
+        <button id="all-off" type="button">All off</button>
+      </div>
+    </div>
+    <div id="all-controls"></div>
+  </section>
+
+  <main id="lamps" class="grid"></main>
+
+  <p id="empty" class="empty" hidden>
+    No lamps yet. Click <b>Discover lamps</b>, or add one by IP address.<br />
+    Make sure <b>LAN Control</b> is enabled for each lamp in the Yeelight app.
+  </p>
+
+  <dialog id="preset-dialog">
+    <form method="dialog">
+      <h2>Save as preset</h2>
+      <p id="preset-summary" class="hint"></p>
+      <input id="preset-name" type="text" placeholder="Preset name" maxlength="24" required autocomplete="off" />
+      <div class="dialog-buttons">
+        <button value="save" class="primary">Save</button>
+        <button value="cancel" formnovalidate>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>
