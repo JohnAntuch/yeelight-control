@@ -276,6 +276,30 @@ function buildAllBar() {
 
 /* ---------- discovery / add ---------- */
 
+// Every lamp has a permanent id. When a saved lamp is offline (for example its IP changed after a
+// power cut), a quiet discovery finds it again by id and updates the saved IP.
+let syncing = false;
+let lastSync = 0;
+async function syncLamps(force = false) {
+  if (syncing || state.lamps.length === 0) return;
+  if (!force && Date.now() - lastSync < 30000) return;
+  const needed = state.lamps.some((l) => !l.id || state.status.get(l.ip) === null);
+  if (!needed && !force) return;
+
+  syncing = true;
+  lastSync = Date.now();
+  try {
+    const result = await window.api.discover({ addNew: false });
+    state.lamps = result.lamps;
+    if (result.moved > 0) {
+      renderAll();
+      toast(`${result.moved} lamp(s) changed IP address. The app updated it automatically.`);
+    }
+  } finally {
+    syncing = false;
+  }
+}
+
 async function discover() {
   const button = $("#discover");
   button.disabled = true;
@@ -287,7 +311,7 @@ async function discover() {
     toast(
       result.found === 0
         ? "No lamps found. Check that LAN Control is on and Windows Firewall allows the app, or add a lamp by IP."
-        : `Found ${result.found} lamp(s), ${result.added} new.`,
+        : `Found ${result.found} lamp(s): ${result.added} new, ${result.moved} with an updated IP.`,
       result.found === 0
     );
   } finally {
@@ -308,6 +332,7 @@ $("#add-form").addEventListener("submit", async (event) => {
   $("#add-ip").value = "";
   $("#add-name").value = "";
   renderAll();
+  setTimeout(() => syncLamps(true), 1500); // learn the new lamp's permanent id
 });
 
 /* ---------- start with Windows ---------- */
@@ -342,7 +367,10 @@ async function initStartupOption() {
   state.lamps = await window.api.list();
   renderAll();
   if (state.lamps.length === 0) discover();
-  setInterval(() => {
-    if (!document.hidden) state.lamps.forEach((l) => refresh(l.ip));
+  setTimeout(syncLamps, 3000);
+  setInterval(async () => {
+    if (document.hidden) return;
+    await Promise.all(state.lamps.map((l) => refresh(l.ip)));
+    syncLamps();
   }, 10000);
 })();

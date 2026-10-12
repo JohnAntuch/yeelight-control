@@ -127,17 +127,14 @@ function registerIpc() {
     return lamps;
   });
 
-  ipcMain.handle("lamps:discover", async () => {
+  // opts.addNew === false: only update / identify saved lamps (silent background syncing).
+  ipcMain.handle("lamps:discover", async (_e, opts) => {
+    const addNew = !(opts && opts.addNew === false);
     const found = await yeelight.discover();
     const lamps = loadLamps();
-    let added = 0;
-    for (const f of found) {
-      if (lamps.some((l) => l.ip === f.ip)) continue;
-      lamps.push({ ip: f.ip, name: f.name || `Yeelight ${f.model}`.trim() });
-      added++;
-    }
+    const { added, moved } = yeelight.mergeDiscovered(lamps, found, addNew);
     saveLamps(lamps);
-    return { lamps, found: found.length, added };
+    return { lamps, found: found.length, added, moved };
   });
 
   ipcMain.handle("lamp:state", async (_e, ip) => {

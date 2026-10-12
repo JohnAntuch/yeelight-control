@@ -1,7 +1,7 @@
 {
   "name": "yeelight-control",
   "productName": "Yeelight Control",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Desktop app to control Yeelight / Xiaomi lamps over the local network.",
   "main": "main.js",
   "author": "You",

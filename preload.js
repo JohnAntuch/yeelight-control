@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld("api", {
   add: (ip, name) => ipcRenderer.invoke("lamps:add", ip, name),
   remove: (ip) => ipcRenderer.invoke("lamps:remove", ip),
   rename: (ip, name) => ipcRenderer.invoke("lamps:rename", ip, name),
-  discover: () => ipcRenderer.invoke("lamps:discover"),
+  discover: (opts) => ipcRenderer.invoke("lamps:discover", opts),
   state: (ip) => ipcRenderer.invoke("lamp:state", ip),
   action: (ip, action) => ipcRenderer.invoke("lamp:action", ip, action),
 
